@@ -1,8 +1,6 @@
-inet
+goo
 ===
 
-A very simple web browser written in Go using SDL.
-
-**NOTE: This isn't usable at the moment. Still fleshing out the GUI**
+A simple GUI library using SDL written in Go.
 
 more coming soon...
