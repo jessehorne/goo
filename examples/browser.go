@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/jessehorne/inet/gui"
+	gui "github.com/jessehorne/goo"
 )
 
 func main() {
