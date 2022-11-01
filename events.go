@@ -1,6 +1,9 @@
 package gui
 
-import "github.com/veandco/go-sdl2/sdl"
+import "C"
+import (
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 func UpdateMousePos(x int32, y int32) {
 	A.MouseX = x
@@ -49,6 +52,9 @@ func MouseButtonEvent(cs []*Container, event *sdl.MouseButtonEvent) {
 func UpdateHoverStateForAllContainers(cs []*Container) {
 	// Update Element Hovers
 	for _, c := range cs {
+		// skip this step if the mouse isn't actually inside the container
+		inside := A.MouseX >= c.X && A.MouseY <= c.X+c.Width && A.MouseY >= c.Y && A.MouseY <= c.Y+c.Height
+
 		for _, e := range c.Elements {
 			// if button
 			switch e.(type) {
@@ -56,7 +62,7 @@ func UpdateHoverStateForAllContainers(cs []*Container) {
 				btn := e.(*TextButton)
 				rect1 := sdl.Rect{X: A.MouseX, Y: A.MouseY, W: 1, H: 1}
 				rect2 := sdl.Rect{X: btn.X, Y: btn.Y, W: btn.Width, H: btn.Height}
-				if BBox(rect1, rect2) {
+				if BBox(rect1, rect2) && inside {
 					btn.SetHover(true)
 				} else {
 					btn.SetHover(false)
@@ -65,7 +71,7 @@ func UpdateHoverStateForAllContainers(cs []*Container) {
 				btn := e.(*ImgButton)
 				rect1 := sdl.Rect{X: A.MouseX, Y: A.MouseY, W: 1, H: 1}
 				rect2 := sdl.Rect{X: btn.X, Y: btn.Y, W: btn.Width, H: btn.Height}
-				if BBox(rect1, rect2) {
+				if BBox(rect1, rect2) && inside {
 					btn.SetHover(true)
 				} else {
 					btn.SetHover(false)
@@ -74,7 +80,7 @@ func UpdateHoverStateForAllContainers(cs []*Container) {
 				i := e.(*OneLineInput)
 				rect1 := sdl.Rect{X: A.MouseX, Y: A.MouseY, W: 1, H: 1}
 				rect2 := sdl.Rect{X: i.X, Y: i.Y, W: i.Width, H: i.Height}
-				if BBox(rect1, rect2) {
+				if BBox(rect1, rect2) && inside {
 					i.SetHover(true)
 				} else {
 					i.SetHover(false)

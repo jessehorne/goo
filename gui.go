@@ -12,6 +12,9 @@ var R *sdl.Renderer
 
 var Color = COLOR_WHITE // current draw color for many things such as primitives and font text
 
+const ALIGN_CENTER = 0 // margin, padding and center alignment
+const ALIGN_FREE = 1   // no automated position adjustment
+
 // Init sets up pointers to everything that will be used for drawing and so on
 func Init(app *App) error {
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
