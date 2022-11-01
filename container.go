@@ -87,6 +87,9 @@ func (c *Container) AlignElementsCenter() {
 		case *OneLineInput:
 			i := e.(*OneLineInput)
 			totalWidth += i.Width
+		case *Label:
+			l := e.(*Label)
+			totalWidth += l.Width
 		}
 	}
 
@@ -107,6 +110,11 @@ func (c *Container) AlignElementsCenter() {
 			currentX += btn.Width + c.AlignMargin
 		case *OneLineInput:
 			i := e.(*OneLineInput)
+			i.X = eX
+			i.Y = centerY - i.Height/2
+			currentX += i.Width + c.AlignMargin
+		case *Label:
+			i := e.(*Label)
 			i.X = eX
 			i.Y = centerY - i.Height/2
 			currentX += i.Width + c.AlignMargin

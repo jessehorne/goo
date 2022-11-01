@@ -12,6 +12,9 @@ func main() {
 	titleBar.SetBackgroundColor(gui.COLOR_RED)
 	titleBar.SetAlignment(gui.ALIGN_CENTER)
 
+	buttonsLabel := gui.NewLabel("Buttons:", 32, 0, 0)
+	titleBar.AddElement(buttonsLabel)
+
 	helloBtn := gui.NewTextButton("Hello!", 0, 0)
 	titleBar.AddElement(helloBtn)
 
