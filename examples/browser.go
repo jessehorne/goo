@@ -12,7 +12,8 @@ func main() {
 	}
 	app.SetTitle("example 2")
 
-	topBar := gui.NewContainer(0, 0, app.ScreenWidth, 36+(10*2), gui.THEME_BLUE_90)
+	topBar := gui.NewContainer(0, 0, app.ScreenWidth, 36+(10*2))
+	topBar.SetBackgroundColor(gui.THEME_BLUE_90)
 
 	backImgButton, err := gui.NewImgButton("./resources/images/arrow-left.svg", 10, 10)
 	if err != nil {

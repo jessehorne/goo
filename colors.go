@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-var COLOR_CLEAR = RGBAToColor(0, 0, 0, 1)
+var COLOR_CLEAR = RGBAToColor(50, 0, 0, 0)
 var COLOR_BLACK = RGBAToColor(0, 0, 0, 0)
 var COLOR_WHITE = RGBAToColor(255, 255, 255, 0)
 var COLOR_WHITE_ALPHA = RGBAToColor(255, 255, 255, 30)

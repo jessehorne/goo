@@ -13,7 +13,8 @@ type Container struct {
 	OutlineColor    sdl.Color
 	Elements        []interface{}
 	ElementOffsetX  int32
-	Alignment       int8
+	Alignment       uint8
+	AlignMargin     int32
 }
 
 func NewContainer(x int32, y int32, w int32, h int32) *Container {
@@ -25,6 +26,7 @@ func NewContainer(x int32, y int32, w int32, h int32) *Container {
 		BackgroundColor: COLOR_CLEAR,
 		OutlineColor:    COLOR_CLEAR,
 		Alignment:       ALIGN_FREE,
+		AlignMargin:     10, // 10 pixels margin between elements
 	}
 }
 
@@ -36,8 +38,10 @@ func (c *Container) Draw() {
 	DrawFilledRect(&rect)
 
 	// Outline color
-	SetColor(c.OutlineColor)
-	DrawLineRect(&rect)
+	if c.OutlineColor != COLOR_CLEAR {
+		SetColor(c.OutlineColor)
+		DrawLineRect(&rect)
+	}
 
 	// Draw and clip elements
 	R.SetClipRect(&rect)
@@ -58,9 +62,56 @@ func (c *Container) SetOutlineColor(newColor sdl.Color) {
 func (c *Container) AddElement(e interface{}) {
 	c.Elements = append(c.Elements, e)
 
-	// (re)align elements
-	//centerX := (c.X + c.Width) / 2
-	//centerY := (c.Y + c.Height) / 2
+	if c.Alignment == ALIGN_CENTER {
+		c.AlignElementsCenter()
+	}
+}
+
+func (c *Container) AlignElementsCenter() {
+	centerX := (c.X + c.Width) / 2
+	centerY := (c.Y + c.Height) / 2
+	elemCount := int32(len(c.Elements))
+
+	totalWidth := elemCount * c.AlignMargin
+
+	// TODO: figure out how to do this in one pass :)
+
+	for _, e := range c.Elements {
+		switch e.(type) {
+		case *TextButton:
+			btn := e.(*TextButton)
+			totalWidth += btn.Width
+		case *ImgButton:
+			btn := e.(*ImgButton)
+			totalWidth += btn.Width
+		case *OneLineInput:
+			i := e.(*OneLineInput)
+			totalWidth += i.Width
+		}
+	}
+
+	currentX := centerX - (totalWidth / 2)
+	for _, e := range c.Elements {
+		eX := currentX
+
+		switch e.(type) {
+		case *TextButton:
+			btn := e.(*TextButton)
+			btn.X = eX
+			btn.Y = centerY - btn.Height/2
+			currentX += btn.Width + c.AlignMargin
+		case *ImgButton:
+			btn := e.(*ImgButton)
+			btn.X = eX
+			btn.Y = centerY - btn.Height/2
+			currentX += btn.Width + c.AlignMargin
+		case *OneLineInput:
+			i := e.(*OneLineInput)
+			i.X = eX
+			i.Y = centerY - i.Height/2
+			currentX += i.Width + c.AlignMargin
+		}
+	}
 }
 
 func (c *Container) ResetHoverStates() {
@@ -77,4 +128,8 @@ func (c *Container) ResetHoverStates() {
 			i.SetHover(false)
 		}
 	}
+}
+
+func (c *Container) SetAlignment(a uint8) {
+	c.Alignment = a
 }
