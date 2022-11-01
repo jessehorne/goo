@@ -44,11 +44,11 @@ func (c *Container) Draw() {
 	}
 
 	// Draw and clip elements
-	R.SetClipRect(&rect)
 	for _, e := range c.Elements {
+		R.SetClipRect(&rect)
 		e.(Element).Draw()
+		ResetClipRect()
 	}
-	ResetClipRect()
 }
 
 func (c *Container) SetBackgroundColor(newColor sdl.Color) {
@@ -68,8 +68,8 @@ func (c *Container) AddElement(e interface{}) {
 }
 
 func (c *Container) AlignElementsCenter() {
-	centerX := (c.X + c.Width) / 2
-	centerY := (c.Y + c.Height) / 2
+	centerX := c.X + c.Width/2
+	centerY := c.Y + c.Height/2
 	elemCount := int32(len(c.Elements))
 
 	totalWidth := elemCount * c.AlignMargin
@@ -77,64 +77,24 @@ func (c *Container) AlignElementsCenter() {
 	// TODO: figure out how to do this in one pass :)
 
 	for _, e := range c.Elements {
-		switch e.(type) {
-		case *TextButton:
-			btn := e.(*TextButton)
-			totalWidth += btn.Width
-		case *ImgButton:
-			btn := e.(*ImgButton)
-			totalWidth += btn.Width
-		case *OneLineInput:
-			i := e.(*OneLineInput)
-			totalWidth += i.Width
-		case *Label:
-			l := e.(*Label)
-			totalWidth += l.Width
-		}
+		w, _ := e.(Element).GetSize()
+		totalWidth += w
 	}
 
 	currentX := centerX - (totalWidth / 2)
 	for _, e := range c.Elements {
 		eX := currentX
-
-		switch e.(type) {
-		case *TextButton:
-			btn := e.(*TextButton)
-			btn.X = eX
-			btn.Y = centerY - btn.Height/2
-			currentX += btn.Width + c.AlignMargin
-		case *ImgButton:
-			btn := e.(*ImgButton)
-			btn.X = eX
-			btn.Y = centerY - btn.Height/2
-			currentX += btn.Width + c.AlignMargin
-		case *OneLineInput:
-			i := e.(*OneLineInput)
-			i.X = eX
-			i.Y = centerY - i.Height/2
-			currentX += i.Width + c.AlignMargin
-		case *Label:
-			i := e.(*Label)
-			i.X = eX
-			i.Y = centerY - i.Height/2
-			currentX += i.Width + c.AlignMargin
-		}
+		elemW, elemH := e.(Element).GetSize()
+		newX := eX
+		newY := centerY - elemH/2
+		currentX += elemW + c.AlignMargin
+		e.(Element).SetPos(newX, newY)
 	}
 }
 
 func (c *Container) ResetHoverStates() {
 	for _, e := range c.Elements {
-		switch e.(type) {
-		case *TextButton:
-			btn := e.(*TextButton)
-			btn.SetHover(false)
-		case *ImgButton:
-			btn := e.(*ImgButton)
-			btn.SetHover(false)
-		case *OneLineInput:
-			i := e.(*OneLineInput)
-			i.SetHover(false)
-		}
+		e.(Element).SetHover(false)
 	}
 }
 

@@ -30,6 +30,9 @@ type OneLineInput struct {
 	IsHovering        bool
 	IsHoldingShift    bool
 	Callback          func(i *OneLineInput)
+	Font              *Font
+	FontStyle         string
+	FontSize          int32
 }
 
 func NewOneLineInput(placeholder string, x int32, y int32, w int32, h int32) *OneLineInput {
@@ -56,7 +59,16 @@ func NewOneLineInput(placeholder string, x int32, y int32, w int32, h int32) *On
 		Active:            false,
 		IsHovering:        false,
 		IsHoldingShift:    false,
+		Font:              Fonts["normal"][14],
+		FontStyle:         "normal",
+		FontSize:          14,
 	}
+}
+
+func (i *OneLineInput) SetFont(fontStyle string, fontSize int32) {
+	i.FontStyle = fontStyle
+	i.FontSize = fontSize
+	i.Font = Fonts[fontStyle][fontSize]
 }
 
 func (i *OneLineInput) MouseButtonEvent(event *sdl.MouseButtonEvent) {
@@ -80,7 +92,7 @@ func (i *OneLineInput) Trigger() {
 }
 
 func (i *OneLineInput) KeyboardEvent(t uint32, key sdl.Keysym) {
-	SetFont("light")
+	SetFont(i.FontStyle, i.FontSize)
 
 	if i.Active {
 		k := sdl.GetKeyName(key.Sym)
@@ -185,13 +197,13 @@ func (i *OneLineInput) MoveCursor(pos int32) {
 		i.CursorPos = pos
 	}
 
-	SetFont("light")
+	SetFont(i.FontStyle, i.FontSize)
 	w, _ := GetTextSize(i.Text[:i.CursorPos])
 	i.CursorX = int32(w)
 }
 
 func (i *OneLineInput) AddText(t string) {
-	SetFont("light")
+	SetFont(i.FontStyle, i.FontSize)
 
 	if i.HighlightEndPos > int32(0) {
 		i.ClearText()
@@ -235,7 +247,7 @@ func (i *OneLineInput) Backspace() {
 
 	i.Text = first + second
 
-	SetFont("light")
+	SetFont(i.FontStyle, i.FontSize)
 	w, _ := GetTextSize(i.Text[:i.CursorPos])
 	i.CursorX = int32(w)
 }
@@ -260,59 +272,66 @@ func (i *OneLineInput) Draw() {
 	SetColor(i.OutlineColor)
 	DrawLineRect(&rect)
 
-	SetFont("light")
+	SetFont(i.FontStyle, i.FontSize)
+
+	width, height, err := CurrentFont().Font.SizeUTF8(i.Text)
+	if err != nil {
+		return
+	}
+
+	offsetX := int32(0)
+	offsetY := (i.Height / 2) - (int32(height) / 2) - i.PaddingY
+	textX := originX + i.PaddingX + offsetX
+	textY := originY + i.PaddingY + offsetY
+	printW := i.Width - i.PaddingX
+	printH := int32(height)
+	printRect := sdl.Rect{X: textX, Y: textY, W: printW, H: printH}
+	R.SetClipRect(&printRect)
 
 	// Draw Placeholder
 	if i.Active {
-		width, height, err := Fonts[CurrentFont].Font.SizeUTF8(i.Text)
-
 		// draw highlight background
 		if i.HighlightEndPos > 0 {
-			if err != nil {
-				return
-			}
-
-			boxX := originX + i.PaddingX + 2
-			boxY := originY + i.PaddingY + 2
 			boxW := int32(width)
-			boxH := int32(height) - 2
-			rect := sdl.Rect{X: boxX, Y: boxY, W: boxW, H: boxH}
+			boxH := int32(height)
+			rect := sdl.Rect{X: textX, Y: textY, W: boxW, H: boxH}
 
 			SetColor(i.HighlightColor)
 			DrawFilledRect(&rect)
 		}
 
-		printX := originX + i.PaddingX + 2
-		printY := originY + i.PaddingY
-		printW := i.Width - i.PaddingX - 8
-		printH := int32(height) - 2
-		printRect := sdl.Rect{X: printX, Y: printY, W: printW, H: printH}
-
-		R.SetClipRect(&printRect)
-
-		// draw text if it's set
-		if len(i.Text) > 0 {
-
-			SetColor(COLOR_WHITE)
-			Print(i.Text, printX, printY)
-		}
-
-		cursorX := originX + i.PaddingX + 2 + i.CursorX
-		cursorY := originY + i.PaddingY + 2
-		lineRect := sdl.Rect{X: cursorX, Y: cursorY, W: 2, H: int32(height) - 2}
+		cursorX := textX + i.CursorX
+		cursorY := textY
+		lineRect := sdl.Rect{X: cursorX, Y: cursorY, W: 2, H: int32(height)}
 		SetColor(COLOR_WHITE)
 		DrawFilledRect(&lineRect)
-
-		ResetClipRect()
-	} else {
-		if len(i.Text) == 0 {
-			// draw placeholder text if there's no text and input isn't active
-			SetColor(i.PlaceholderColor)
-			Print(i.Placeholder, originX+i.PaddingX, originY+i.PaddingY)
-		} else {
-			// draw text since it's set and input isn't active
-			SetColor(COLOR_WHITE)
-			Print(i.Text, originX+i.PaddingX+2, originY+i.PaddingY)
-		}
 	}
+
+	if len(i.Text) == 0 {
+		// draw placeholder text if there's no text and input isn't active
+		SetColor(i.PlaceholderColor)
+		Print(i.Placeholder, textX, textY)
+	} else {
+		// draw text since it's set and input isn't active
+		SetColor(COLOR_WHITE)
+		Print(i.Text, textX, textY)
+	}
+}
+
+func (i *OneLineInput) GetPos() (int32, int32) {
+	return i.X, i.Y
+}
+
+func (i *OneLineInput) SetPos(x int32, y int32) {
+	i.X = x
+	i.Y = y
+}
+
+func (i *OneLineInput) GetSize() (int32, int32) {
+	return i.Width, i.Height
+}
+
+func (i *OneLineInput) SetSize(w int32, h int32) {
+	i.Width = w
+	i.Height = h
 }

@@ -88,11 +88,6 @@ func (b *ImgButton) SetPadding(x int32, y int32) {
 	b.PaddingY = y
 }
 
-func (b *ImgButton) SetSize(w int32, h int32) {
-	b.Width = w
-	b.Height = h
-}
-
 func (b *ImgButton) SetHover(which bool) {
 	if which {
 		b.BackgroundColor = BUTTON_LIGHT
@@ -125,4 +120,26 @@ func (b *ImgButton) Draw() {
 	destY := originY + b.PaddingY
 	DrawImage(b.Image, destX, destY)
 
+}
+
+func (b *ImgButton) GetPos() (int32, int32) {
+	return b.X, b.Y
+}
+
+func (b *ImgButton) SetPos(x int32, y int32) {
+	b.X = x
+	b.Y = y
+}
+
+func (b *ImgButton) GetSize() (int32, int32) {
+	return b.Width, b.Height
+}
+
+func (b *ImgButton) SetSize(w int32, h int32) {
+	b.Width = w
+	b.Height = h
+}
+
+func (b *ImgButton) KeyboardEvent(keyType uint32, key sdl.Keysym) {
+	return
 }

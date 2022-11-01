@@ -10,43 +10,23 @@ func UpdateMousePos(x int32, y int32) {
 	A.MouseY = y
 }
 
-func KeyboardEvent(cs []*Container, t uint32, key sdl.Keysym) {
+func KeyboardEvent(cs []*Container, keyType uint32, key sdl.Keysym) {
 	for _, c := range cs {
 		for _, e := range c.Elements {
-			switch e.(type) {
-			case *TextButton:
-				//btn := e.(*TextButton)
-				// TODO
-			case *ImgButton:
-				//btn := e.(*ImgButton)
-				// TODO
-			case *OneLineInput:
-				i := e.(*OneLineInput)
-				i.KeyboardEvent(t, key)
-			}
-			RedrawAllContainers(cs)
+			e.(Element).KeyboardEvent(keyType, key)
 		}
 	}
+	RedrawAllContainers(cs)
 }
 
 func MouseButtonEvent(cs []*Container, event *sdl.MouseButtonEvent) {
 	// Mouse Button Event for all elements in all containers
 	for _, c := range cs {
 		for _, e := range c.Elements {
-			switch e.(type) {
-			case *TextButton:
-				btn := e.(*TextButton)
-				btn.MouseButtonEvent(event)
-			case *ImgButton:
-				btn := e.(*ImgButton)
-				btn.MouseButtonEvent(event)
-			case *OneLineInput:
-				i := e.(*OneLineInput)
-				i.MouseButtonEvent(event)
-			}
-			RedrawAllContainers(cs)
+			e.(Element).MouseButtonEvent(event)
 		}
 	}
+	RedrawAllContainers(cs)
 }
 
 func UpdateHoverStateForAllContainers(cs []*Container) {

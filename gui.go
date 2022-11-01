@@ -2,7 +2,6 @@ package gui
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
-	"github.com/veandco/go-sdl2/ttf"
 )
 
 var A *App
@@ -36,34 +35,12 @@ func Init(app *App) error {
 		return err
 	}
 
-	err = ttf.Init()
-	if err != nil {
-		return err
-	}
-
-	// load fonts
-	err = LoadFont("normal", "./resources/fonts/Trueno.otf", 24)
+	err = InitFonts()
 	if err != nil {
 		panic(err)
 	}
 
-	err = LoadFont("light", "./resources/fonts/TruenoLight.otf", 24)
-	if err != nil {
-		panic(err)
-	}
-
-	err = LoadFont("light-button", "./resources/fonts/TruenoLight.otf", 18)
-	if err != nil {
-		panic(err)
-	}
-
-	err = LoadFont("normal-button", "./resources/fonts/Trueno.otf", 18)
-	if err != nil {
-		panic(err)
-	}
-
-	// topbar container
-	err = SetFont("normal")
+	err = SetFont("normal", 14)
 	if err != nil {
 		panic(err)
 	}

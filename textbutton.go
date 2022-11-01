@@ -22,7 +22,7 @@ type TextButton struct {
 }
 
 func NewTextButton(t string, x int32, y int32) *TextButton {
-	SetFont("button-light")
+	SetFont("normal", 14)
 	w, h := GetTextSize(t)
 
 	paddingX := int32(5)
@@ -94,11 +94,6 @@ func (b *TextButton) SetPadding(x int32, y int32) {
 	b.PaddingY = y
 }
 
-func (b *TextButton) SetSize(w int32, h int32) {
-	b.Width = w
-	b.Height = h
-}
-
 func (b *TextButton) SetHover(which bool) {
 	if which {
 		b.BackgroundColor = BUTTON_LIGHT
@@ -127,10 +122,32 @@ func (b *TextButton) Draw() {
 
 	// Text
 	SetColor(COLOR_WHITE)
-	SetFont("normal-button")
+	SetFont("normal", 14)
 	textW, textH := GetTextSize(b.Text)
 	textX := b.X + (b.Width / 2) - (int32(textW) / 2)
 	textY := b.Y + (b.Height / 2) - (int32(textH) / 2)
 	Print(b.Text, textX, textY)
 
+}
+
+func (b *TextButton) GetPos() (int32, int32) {
+	return b.X, b.Y
+}
+
+func (b *TextButton) SetPos(x int32, y int32) {
+	b.X = x
+	b.Y = y
+}
+
+func (b *TextButton) GetSize() (int32, int32) {
+	return b.Width, b.Height
+}
+
+func (b *TextButton) SetSize(w int32, h int32) {
+	b.Width = w
+	b.Height = h
+}
+
+func (b *TextButton) KeyboardEvent(keyType uint32, key sdl.Keysym) {
+	return
 }

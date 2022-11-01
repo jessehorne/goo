@@ -6,24 +6,26 @@ import (
 )
 
 type App struct {
-	Title        string
-	ScreenWidth  int32
-	ScreenHeight int32
-	Containers   []*Container
-	Running      bool
-	MouseX       int32
-	MouseY       int32
+	Title           string
+	ScreenWidth     int32
+	ScreenHeight    int32
+	Containers      []*Container
+	Running         bool
+	MouseX          int32
+	MouseY          int32
+	BackgroundColor sdl.Color
 }
 
 func NewApp(title string, w int32, h int32) (*App, error) {
 	newApp := App{
-		Title:        title,
-		ScreenWidth:  w,
-		ScreenHeight: h,
-		Containers:   nil,
-		Running:      true,
-		MouseX:       0,
-		MouseY:       0,
+		Title:           title,
+		ScreenWidth:     w,
+		ScreenHeight:    h,
+		Containers:      nil,
+		Running:         true,
+		MouseX:          0,
+		MouseY:          0,
+		BackgroundColor: COLOR_BLACK,
 	}
 
 	err := Init(&newApp)
@@ -36,6 +38,10 @@ func NewApp(title string, w int32, h int32) (*App, error) {
 
 func (a *App) SetTitle(title string) {
 	W.SetTitle(title)
+}
+
+func (a *App) SetBackgroundColor(c sdl.Color) {
+	a.BackgroundColor = c
 }
 
 func (a *App) AddContainer(c *Container) {
