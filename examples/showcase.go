@@ -15,6 +15,7 @@ func main() {
 	titleBar.SetAlignment(gui.ALIGN_CENTER)
 
 	titleLabel := gui.NewLabel("Goo Showcase", 32, 0, 0)
+	titleLabel.SetFont("normal", 36)
 	titleBar.AddElement(titleLabel)
 
 	// Buttons

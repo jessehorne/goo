@@ -8,12 +8,13 @@ type Label struct {
 	Y          int32
 	Width      int32
 	Height     int32
-	FontSize   uint16
 	Color      sdl.Color
 	IsHovering bool
+	FontStyle  string
+	FontSize   int32
 }
 
-func NewLabel(text string, fontSize uint16, x int32, y int32) *Label {
+func NewLabel(text string, fontSize int32, x int32, y int32) *Label {
 	SetFont("normal", 14)
 	w, h := GetTextSize(text)
 
@@ -29,8 +30,19 @@ func NewLabel(text string, fontSize uint16, x int32, y int32) *Label {
 	}
 }
 
+func (l *Label) SetFont(fontStyle string, fontSize int32) {
+	l.FontStyle = fontStyle
+	l.FontSize = fontSize
+
+	// update width/height
+	SetFont(fontStyle, fontSize)
+	w, h := GetTextSize(l.Text)
+	l.Width = int32(w)
+	l.Height = int32(h)
+}
+
 func (l *Label) Draw() {
-	SetFont("normal", 14)
+	SetFont(l.FontStyle, l.FontSize)
 	SetColor(l.Color)
 	Print(l.Text, l.X, l.Y)
 }
