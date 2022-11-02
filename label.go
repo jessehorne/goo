@@ -15,7 +15,7 @@ type Label struct {
 }
 
 func NewLabel(text string, fontSize int32, x int32, y int32) *Label {
-	SetFont("normal", 14)
+	SetFont(FontStyle, 14)
 	w, h := GetTextSize(text)
 
 	return &Label{

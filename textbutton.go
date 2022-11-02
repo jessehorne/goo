@@ -19,6 +19,8 @@ type TextButton struct {
 	IsHovering      bool
 	IsHolding       bool
 	Callback        func(i *TextButton)
+	FontStyle       string
+	FontSize        int32
 }
 
 func NewTextButton(t string, x int32, y int32) *TextButton {
@@ -43,7 +45,20 @@ func NewTextButton(t string, x int32, y int32) *TextButton {
 		PaddingX:        paddingX,
 		PaddingY:        paddingY,
 		Text:            t,
+		FontStyle:       "normal",
+		FontSize:        14,
 	}
+}
+
+func (b *TextButton) SetFont(fontStyle string, fontSize int32) {
+	b.FontStyle = fontStyle
+	b.FontSize = fontSize
+
+	// update width/height
+	SetFont(fontStyle, fontSize)
+	w, h := GetTextSize(b.Text)
+	b.Width = int32(w) + b.PaddingX*2
+	b.Height = int32(h) + b.PaddingY*2
 }
 
 func (b *TextButton) MouseButtonEvent(event *sdl.MouseButtonEvent) {
@@ -122,7 +137,7 @@ func (b *TextButton) Draw() {
 
 	// Text
 	SetColor(COLOR_WHITE)
-	SetFont("normal", 14)
+	SetFont(b.FontStyle, b.FontSize)
 	textW, textH := GetTextSize(b.Text)
 	textX := b.X + (b.Width / 2) - (int32(textW) / 2)
 	textY := b.Y + (b.Height / 2) - (int32(textH) / 2)

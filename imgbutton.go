@@ -22,22 +22,29 @@ type ImgButton struct {
 }
 
 func NewImgButton(path string, x int32, y int32) (*ImgButton, error) {
-	img, err := NewImageFromSVG(path, 0, 0, 24, 24)
+	defaultWidth := int32(32)
+	defaultHeight := int32(32)
+	defaultImgWidth := int32(24)
+	defaultImgHeight := int32(24)
+
+	img, err := NewImageFromSVG(path, 0, 0, 128, 128)
 	if err != nil {
 		return nil, err
 	}
+	img.Width = defaultImgWidth
+	img.Height = defaultImgHeight
 
 	return &ImgButton{
 		X:               x,
 		Y:               y,
-		Width:           36,
-		Height:          36,
+		Width:           defaultWidth,
+		Height:          defaultHeight,
 		BackgroundColor: THEME_BLUE_90,
 		OutlineColor:    THEME_BLUE_90,
 		MarginX:         0,
 		MarginY:         0,
-		PaddingX:        int32((36 - 24) / 2),
-		PaddingY:        int32((36 - 24) / 2),
+		PaddingX:        int32((defaultWidth - defaultImgWidth) / 2),
+		PaddingY:        int32((defaultHeight - defaultImgHeight) / 2),
 		Image:           img,
 	}, nil
 }
@@ -138,6 +145,8 @@ func (b *ImgButton) GetSize() (int32, int32) {
 func (b *ImgButton) SetSize(w int32, h int32) {
 	b.Width = w
 	b.Height = h
+	b.Image.Width = w - b.PaddingX*2
+	b.Image.Height = h - b.PaddingY*2
 }
 
 func (b *ImgButton) KeyboardEvent(keyType uint32, key sdl.Keysym) {
